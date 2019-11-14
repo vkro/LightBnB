@@ -11,6 +11,11 @@ const pool = new Pool({
 
 /// Users
 
+// getUserWithEmail
+// Accepts an email address and will return a promise.
+// The promise should resolve with the user that has that
+// email address, or null if that user does not exist.
+
 /**
  * Get a single user from the database given their email.
  * @param {String} email The email of the user.
@@ -18,16 +23,32 @@ const pool = new Pool({
  */
 const getUserWithEmail = function (email) {
   let user;
-  for (const userId in users) {
-    user = users[userId];
-    if (user.email.toLowerCase() === email.toLowerCase()) {
-      break;
-    } else {
-      user = null;
-    }
-  }
-  return Promise.resolve(user);
+
+  const queryRes = `
+  SELECT *
+  FROM users
+  WHERE users.email = $1
+  `;
+
+  return pool.query(queryRes, [email])
+    .then((res) => {
+      if (res.rows) {
+        return res.rows[0];
+      } else return null;
+    });
 };
+
+
+//   for (const userId in users) {
+//     user = users[userId];
+//     if (user.email.toLowerCase() === email.toLowerCase()) {
+//       break;
+//     } else {
+//       user = null;
+//     }
+//   }
+//   return Promise.resolve(user);
+// };
 exports.getUserWithEmail = getUserWithEmail;
 
 /**
