@@ -84,10 +84,10 @@ const getAllProperties = function(options, limit = 10) {
 
   pool.query(queryRes, [limit])
 
-  .then(res => {
-      console.log(res.rows)
+    .then(res => {
+      console.log(res.rows);
     });
-}
+};
 
 exports.getAllProperties = getAllProperties;
 
