@@ -59,8 +59,6 @@ const getUserWithId = function (id) {
         return res.rows[0];
       } else return null;
     });
-
-  //return Promise.resolve(users[id]);
 };
 exports.getUserWithId = getUserWithId;
 
