@@ -38,17 +38,6 @@ const getUserWithEmail = function (email) {
     });
 };
 
-
-//   for (const userId in users) {
-//     user = users[userId];
-//     if (user.email.toLowerCase() === email.toLowerCase()) {
-//       break;
-//     } else {
-//       user = null;
-//     }
-//   }
-//   return Promise.resolve(user);
-// };
 exports.getUserWithEmail = getUserWithEmail;
 
 /**
