@@ -135,15 +135,39 @@ exports.getAllReservations = getAllReservations;
  */
 const getAllProperties = function (options, limit = 10) {
 
-  const queryRes = `
-  SELECT *
+  const queryParams = [];
+
+  let queryString = `
+  SELECT properties.*, avg(property_reviews.rating) as average_rating
   FROM properties
-  LIMIT $1
+  JOIN property_reviews ON properties.id = property_id
   `;
 
-  return pool.query(queryRes, [limit])
+  if (options.city) {
+    queryParams.push(`%${options.city}%`);
+    queryString += `WHERE city LIKE $${queryParams.length} `;
+  }
+  if (options.minimum_price_per_night) {
+    if (queryParams.length > 0) {
+      queryString += `AND `
+    } else {
+      queryString += `WHERE `
+    }
+    queryParams.push(`${options.minimum_price_per_night * 100}`);
+    queryString += `cost_per_night > $${queryParams.length} `;
+  }
 
-    .then(res => res.rows);
+  queryParams.push(limit);
+  queryString += `
+  GROUP BY properties.id
+  ORDER BY cost_per_night
+  LIMIT $${queryParams.length};
+  `;
+
+  console.log(queryString, queryParams);
+
+  return pool.query(queryString, queryParams)
+    .then(res => res.rows)
 };
 
 exports.getAllProperties = getAllProperties;
