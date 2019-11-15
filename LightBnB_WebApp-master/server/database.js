@@ -71,7 +71,7 @@ exports.getUserWithId = getUserWithId;
 const addUser = function (user) {
 
   const queryRes = `
-    INSERT INTO users (name, email, password) 
+    INSERT INTO users (name, email, password)
     SELECT $1, $2::varchar, $3
     WHERE NOT EXISTS (SELECT * FROM users WHERE email = $2::varchar)
     RETURNING *
@@ -102,7 +102,26 @@ exports.addUser = addUser;
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function (guest_id, limit = 10) {
-  return getAllProperties(null, 2);
+
+  const queryDatabase = `
+    SELECT reservations.*, properties.*, AVG(property_reviews.rating) AS average_rating
+    FROM reservations
+    JOIN properties ON reservations.property_id = properties.id
+    JOIN property_reviews ON property_reviews.property_id = reservations.property_id
+    WHERE reservations.end_date < now()::date
+    AND reservations.guest_id = $1
+    GROUP BY reservations.id, properties.id
+    ORDER BY reservations.start_date DESC
+    LIMIT $2;
+    `;
+
+  return pool.query(queryDatabase, [guest_id, limit])
+    .then((res) => {
+      if (res.rows) {
+        console.log(res.rows);
+        return res.rows;
+      } else return null;
+    });
 };
 exports.getAllReservations = getAllReservations;
 
