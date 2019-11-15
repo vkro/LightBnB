@@ -24,13 +24,13 @@ const pool = new Pool({
 const getUserWithEmail = function (email) {
   let user;
 
-  const queryRes = `
+  const queryDatabase = `
   SELECT *
   FROM users
   WHERE users.email = $1;
   `;
 
-  return pool.query(queryRes, [email])
+  return pool.query(queryDatabase, [email])
     .then((res) => {
       if (res.rows) {
         return res.rows[0];
@@ -47,13 +47,13 @@ exports.getUserWithEmail = getUserWithEmail;
  */
 const getUserWithId = function (id) {
 
-  const queryRes = `
+  const queryDatabase = `
     SELECT *
     FROM users
     WHERE users.id = $1;
   `;
 
-  return pool.query(queryRes, [id])
+  return pool.query(queryDatabase, [id])
     .then((res) => {
       if (res.rows) {
         return res.rows[0];
@@ -70,14 +70,14 @@ exports.getUserWithId = getUserWithId;
  */
 const addUser = function (user) {
 
-  const queryRes = `
+  const queryDatabase = `
     INSERT INTO users (name, email, password)
     SELECT $1, $2::varchar, $3
     WHERE NOT EXISTS (SELECT * FROM users WHERE email = $2::varchar)
     RETURNING *
   `;
 
-  return pool.query(queryRes, [user.name, user.email, user.password])
+  return pool.query(queryDatabase, [user.name, user.email, user.password])
     .then((res) => {
       if (res.rows) {
         return res.rows[0];
