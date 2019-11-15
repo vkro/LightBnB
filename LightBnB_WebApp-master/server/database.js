@@ -27,7 +27,7 @@ const getUserWithEmail = function (email) {
   const queryRes = `
   SELECT *
   FROM users
-  WHERE users.email = $1
+  WHERE users.email = $1;
   `;
 
   return pool.query(queryRes, [email])
@@ -46,13 +46,13 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function (id) {
-    
+
   const queryRes = `
     SELECT *
     FROM users
-    WHERE users.id = $1
+    WHERE users.id = $1;
   `;
-  
+
   return pool.query(queryRes, [id])
     .then((res) => {
       if (res.rows) {
@@ -69,10 +69,28 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser = function (user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
+
+  const queryRes = `
+    INSERT INTO users (name, email, password) 
+    SELECT $1, $2::varchar, $3
+    WHERE NOT EXISTS (SELECT * FROM users WHERE email = $2::varchar)
+    RETURNING *
+  `;
+
+  return pool.query(queryRes, [user.name, user.email, user.password])
+    .then((res) => {
+      if (res.rows) {
+        return res.rows[0];
+      } else return null;
+    }).catch((error) => {
+      console.log(error);
+    });
+
+
+  // const userId = Object.keys(users).length + 1;
+  // user.id = userId;
+  // users[userId] = user;
+  // return Promise.resolve(user);
 };
 exports.addUser = addUser;
 
@@ -96,7 +114,7 @@ exports.getAllReservations = getAllReservations;
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
  */
-const getAllProperties = function(options, limit = 10) {
+const getAllProperties = function (options, limit = 10) {
 
   const queryRes = `
   SELECT *
