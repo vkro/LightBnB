@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const properties = require('./json/properties.json');
 const users = require('./json/users.json');
 const { Pool } = require('pg');
@@ -21,7 +22,7 @@ const pool = new Pool({
  * @param {String} email The email of the user.
  * @return {Promise<{}>} A promise to the user.
  */
-const getUserWithEmail = function (email) {
+const getUserWithEmail = function(email) {
   let user;
 
   const queryDatabase = `
@@ -45,7 +46,7 @@ exports.getUserWithEmail = getUserWithEmail;
  * @param {string} id The id of the user.
  * @return {Promise<{}>} A promise to the user.
  */
-const getUserWithId = function (id) {
+const getUserWithId = function(id) {
 
   const queryDatabase = `
     SELECT *
@@ -68,7 +69,7 @@ exports.getUserWithId = getUserWithId;
  * @param {{name: string, password: string, email: string}} user
  * @return {Promise<{}>} A promise to the user.
  */
-const addUser = function (user) {
+const addUser = function(user) {
 
   const queryDatabase = `
     INSERT INTO users (name, email, password)
@@ -101,7 +102,7 @@ exports.addUser = addUser;
  * @param {string} guest_id The id of the user.
  * @return {Promise<[{}]>} A promise to the reservations.
  */
-const getAllReservations = function (guest_id, limit = 10) {
+const getAllReservations = function(guest_id, limit = 10) {
 
   const queryDatabase = `
     SELECT reservations.*, properties.*, AVG(property_reviews.rating) AS average_rating
@@ -133,7 +134,7 @@ exports.getAllReservations = getAllReservations;
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
  */
-const getAllProperties = function (options, limit = 10) {
+const getAllProperties = function(options, limit = 10) {
 
   const queryParams = [];
 
@@ -149,18 +150,18 @@ const getAllProperties = function (options, limit = 10) {
   }
   if (options.minimum_price_per_night) {
     if (queryParams.length > 0) {
-      queryString += `AND `
+      queryString += `AND `;
     } else {
-      queryString += `WHERE `
+      queryString += `WHERE `;
     }
     queryParams.push(`${options.minimum_price_per_night * 100}`);
     queryString += `cost_per_night > $${queryParams.length} `;
   }
   if (options.maximum_price_per_night) {
     if (queryParams.length > 0) {
-      queryString += `AND `
+      queryString += `AND `;
     } else {
-      queryString += `WHERE `
+      queryString += `WHERE `;
     }
     queryParams.push(`${options.maximum_price_per_night * 100}`);
     queryString += `cost_per_night < $${queryParams.length} `;
@@ -171,7 +172,7 @@ const getAllProperties = function (options, limit = 10) {
   `;
   if (options.minimum_rating) {
     queryParams.push(`${options.minimum_rating}`);
-    queryString += `HAVING avg(property_reviews.rating) >= $${queryParams.length} `
+    queryString += `HAVING avg(property_reviews.rating) >= $${queryParams.length} `;
   }
   queryParams.push(limit);
   queryString += `
@@ -182,7 +183,7 @@ const getAllProperties = function (options, limit = 10) {
   console.log(queryString, queryParams);
 
   return pool.query(queryString, queryParams)
-    .then(res => res.rows)
+    .then(res => res.rows);
 };
 
 exports.getAllProperties = getAllProperties;
@@ -193,7 +194,7 @@ exports.getAllProperties = getAllProperties;
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
-const addProperty = function (property) {
+const addProperty = function(property) {
   const propertyId = Object.keys(properties).length + 1;
   property.id = propertyId;
   properties[propertyId] = property;
