@@ -5,7 +5,7 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   user: 'vagrant',
-  password: '123',
+  password: 'password',
   host: 'localhost',
   database: 'lightbnb'
 });
@@ -86,12 +86,6 @@ const addUser = function(user) {
     }).catch((error) => {
       console.log(error);
     });
-
-
-  // const userId = Object.keys(users).length + 1;
-  // user.id = userId;
-  // users[userId] = user;
-  // return Promise.resolve(user);
 };
 exports.addUser = addUser;
 
@@ -194,7 +188,7 @@ exports.getAllProperties = getAllProperties;
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
-const addProperty = function(property) {
+const x = function(property) {
   const propertyId = Object.keys(properties).length + 1;
   property.id = propertyId;
   properties[propertyId] = property;
