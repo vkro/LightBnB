@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable func-style */
 $(() => {
   window.header = {};
 
@@ -41,9 +43,9 @@ $(() => {
   window.header.update = updateHeader;
 
   getMyDetails()
-    .then(function( json ) {
-    updateHeader(json.user);
-  });
+    .then(function(json) {
+      updateHeader(json.user);
+    });
 
   $("header").on("click", '.my_reservations_button', function() {
     propertyListings.clearListings();
