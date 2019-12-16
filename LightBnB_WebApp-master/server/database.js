@@ -5,7 +5,7 @@ const { Pool } = require('pg');
 
 const pool = new Pool({
   user: 'vagrant',
-  password: 'password',
+  password: '123',
   host: 'localhost',
   database: 'lightbnb'
 });
@@ -184,11 +184,11 @@ exports.getAllProperties = getAllProperties;
 
 
 /**
- * Add a property to the database
+ * Add a property to the database2
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
-const x = function(property) {
+const addProperty = function(property) {
   const propertyId = Object.keys(properties).length + 1;
   property.id = propertyId;
   properties[propertyId] = property;
